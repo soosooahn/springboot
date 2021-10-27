@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,5 +73,31 @@ public class PostsRepositoryTest {
 
         System.out.println(result.size());
         assertThat(result).hasSize(1);
+    }
+
+    // LocalDate: 일자
+    // LocalDateTime: 일시까지
+    @Test
+    public void 등록시간_수정시간이_저장된다(){
+        //given
+        LocalDateTime now = LocalDateTime.of(2019,6,4,0,0,0);
+        postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build());
+
+        // 지금 등록한 일시와 수정일시는 최소한 2019년 보다는 뒤에 있을거라는 확신
+        // 매일 수행할때마다 테스트 일시가 변경되니 특정일시를 확정할 수 없는 테스트
+        //when
+        List<Posts> postsList = postsRepository.findAll();
+
+        //then
+        Posts posts = postsList.get(0);
+
+        System.out.println(">>>>>>>>>>>>>>> createDate="+posts.getCreatedDate()+", modifiedDate="+posts.getModifiedDate());
+
+        assertThat(posts.getCreatedDate()).isAfter(now);
+        assertThat(posts.getModifiedDate()).isAfter(now);
     }
 }

@@ -2,13 +2,14 @@ package com.koscom.springboot.service;
 
 import com.koscom.springboot.domain.posts.Posts;
 import com.koscom.springboot.domain.posts.PostsRepository;
+import com.koscom.springboot.web.dto.posts.PostsResponseDto;
 import com.koscom.springboot.web.dto.posts.PostsSaveRequestDto;
 import com.koscom.springboot.web.dto.posts.PostsUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor //final로 선언된 필드들은 생성자 항목으로 자동 포함시켜서 생성자 생성
+@RequiredArgsConstructor // final로 선언된 필드들은 생성자 항목으로 자동 포함시켜서 생성자 생성
 @Service // spring bean 등록 & Service 클래스 선언
 public class PostsService {
     private final PostsRepository postsRepository;
@@ -32,5 +33,13 @@ public class PostsService {
         entity.update(dto.getTitle(), dto.getContent());
 
         return entity.getId();
+    }
+
+    // 조회
+    public PostsResponseDto findById(Long id){
+        Posts entity = postsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 없습니다. id="+id));
+
+        return new PostsResponseDto(entity);
     }
 }
