@@ -1,5 +1,7 @@
 package com.koscom.springboot.web;
 
+import com.koscom.springboot.config.auth.dto.SessionUser;
+import com.koscom.springboot.config.auth.login.LoginUser;
 import com.koscom.springboot.service.PostsService;
 import com.koscom.springboot.web.dto.posts.PostsResponseDto;
 import com.koscom.springboot.web.dto.posts.PostsSaveRequestDto;
@@ -16,9 +18,13 @@ public class IndexController {
     private final PostsService postsService;
 
     @GetMapping("/")
-    public String index(Model model){ // ModelAndView
+    public String index(Model model, @LoginUser SessionUser user){ // ModelAndView
         postsService.save(new PostsSaveRequestDto("test", "test","test"));
         model.addAttribute("posts", postsService.findAllDesc());
+
+        if(user != null){ // (2)
+            model.addAttribute("user",user.getName());
+        }
         return "index";
     }
 
